@@ -1,0 +1,68 @@
+#!/bin/bash --norc
+#fazer CHMOD 711 _fb
+extflex=flex
+t=$1
+err=0
+shift
+if [ -e $t.y ] 
+then
+  # existe bison
+  echo "*******************************************************"
+  echo "***         A criar o analisador sintactico"
+  echo "***" bison -d -v $t.y
+  echo "*******************************************************"
+  bison -d -v $t.y
+  err=$?
+  echo "Erro bison " $err
+  if [ !$err ]
+  then
+    if [ -e $t.$extflex ] 
+    then
+      echo "*******************************************************"
+      echo "***           A criar o analisador lexico"
+      echo "***" flex -t $t.$extflex \> $t.c
+      echo "*******************************************************"
+      flex -t $t.$extflex > $t.c
+  
+      err1=$?
+      echo "Erro flex " $err1
+      
+      if [ !$err1 ]
+      then
+        echo "*******************************************************"
+        echo "***                   A compilar"
+        echo "***" gcc -o $t $1.c $t.tab.c -lfl
+        echo "*******************************************************"
+        gcc -o $t $t.c $t.tab.c $* -lfl
+        err2=$?
+        echo "Erro gcc " $err2
+      fi
+    fi
+  fi
+else
+  # n�o existe bison
+  if [ -e $t.$extflex ] 
+  then
+    echo "*******************************************************"
+    echo "***           A criar o analisador lexico"
+    echo "***" flex -t $t.$extflex \> $t.c
+    echo "*******************************************************"
+    flex -t $t.$extflex > $t.c
+
+    err1=$?
+    echo "Erro flex " $err1
+    
+    if [ !$err1 ]
+    then
+      echo "*******************************************************"
+      echo "***                   A compilar"
+      echo "***" gcc -o $t $1.c -lfl 
+      echo "*******************************************************"
+      gcc -o $t $t.c $* -lfl
+      err2=$?
+      echo "Erro gcc " $err2
+    fi
+  else
+	echo "******************nada a fazer***************************"
+  fi
+fi
