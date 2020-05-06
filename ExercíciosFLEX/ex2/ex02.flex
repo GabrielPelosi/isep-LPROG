@@ -1,0 +1,22 @@
+%{
+
+
+%}
+
+
+
+%%
+FEUP 			{printf("ISEP");}
+
+2007 			{printf("2008");}
+
+.               { printf("%s", yytext); }
+
+%%
+
+int main(){
+	printf("Bem-vindo, para sair aperte Ctrl+D");
+	yylex();
+	return 0;
+	
+}
